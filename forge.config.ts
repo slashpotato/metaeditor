@@ -10,30 +10,44 @@ import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
 const config: ForgeConfig = {
-  packagerConfig: {
-    asar: true,
-  },
-  rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
-  plugins: [
-    new AutoUnpackNativesPlugin({}),
-    new WebpackPlugin({
-      mainConfig,
-      renderer: {
-        config: rendererConfig,
-        entryPoints: [
-          {
-            html: './src/index.html',
-            js: './src/renderer.ts',
-            name: 'main_window',
-            preload: {
-              js: './src/preload.ts',
+    packagerConfig: {
+        asar: true,
+        icon: '/build/icon',
+    },
+    rebuildConfig: {},
+    makers: [
+        new MakerSquirrel({}),
+        new MakerZIP({}, ['darwin']),
+        new MakerRpm({}),
+        new MakerDeb({}),
+        {
+            name: '@electron-forge/maker-deb',
+            config: {
+                options: {
+                    icon: '/build/icon.png'
+                }
+            }
+        },
+    ],
+    plugins: [
+        new AutoUnpackNativesPlugin({}),
+        new WebpackPlugin({
+            mainConfig,
+            renderer: {
+                config: rendererConfig,
+                entryPoints: [
+                    {
+                        html: './src/index.html',
+                        js: './src/renderer.ts',
+                        name: 'main_window',
+                        preload: {
+                            js: './src/preload.ts',
+                        },
+                    },
+                ],
             },
-          },
-        ],
-      },
-    }),
-  ],
+        }),
+    ],
 };
 
 export default config;
